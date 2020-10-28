@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>图标点标记</title>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+    <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=4c46d2d7c17ec8b726f51a6fd5247b2e"></script>
+    <style>
+        html,body,#container{
+            height:100%;
+            width:100%;
+        }
+        .amap-icon img{
+            width: 44px;
+            height: 70px;
+        }
+        .amap-info-content{
+            background: none;
+        }
+        .amap-info-outer{
+            box-shadow: none;
+        }
+        .amap-info-sharp{
+            display: none;
+        }
+        .amap-info-contentContainer:hover{
+            border: none;
+        }
+        .info {
+            padding: 1.3rem 1.25rem;
+            margin-bottom: 1rem;
+            position: fixed;
+            top: -4.2rem;
+            background-color: white;
+            width: auto;
+            min-width: 10rem;
+            border-width: 0;
+            right: -6rem;
+            box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+            font-size: 19px;
+            color: #000;
+            font-weight: bolder;
+            font-family: Microsoft Yahei;
+            text-align: center;
+        }
+        .info:hover{
+            background: #006cff;
+            color: #eee;
+            cursor: pointer;
+        }
+        .amap-marker-label{
+            border:0;
+            padding: 0;
+        }
+        .amap-info-contentContainer.bottom-center{
+            margin-bottom: -11px;
+            margin-left: 10px;
+        }
+        /*------------------*/
+
+        .editDialog{
+            width:500px; height:350px; background: url(images/info_bg.png);background-size: 100% 100%; background-repeat:no-repeat;
+            padding:60px 20px 20px 40px;
+        }
+        .editDialog input, .editDialog textarea{
+            background: #133967;
+            width:330px;
+            border: solid 1px #006cff;
+            opacity: 0.7;
+            color:#eee;
+            font-size: 20px;
+            padding-left:5px;
+        }
+        .editDialog div span{
+            font-size: 22px;
+            color: #ccc;
+            float:left;
+            padding-top: 21px;
+            margin-right: 18px;
+        }
+        .editDialog input{
+            margin: 20px 0px;
+            height: 45px;
+        }
+        .editDialog textarea{
+            height: 90px
+        }
+        .editDialog .btn{
+            background: #006cff;
+            border-radius: 2px;
+            padding: 7px 30px;
+            font-size: 18px;
+            color: #ddd;
+            margin-left: 10px;
+        }
+        .editDialog .btn:hover{
+            background: #008cff;
+        }
+        .logo{
+            position: fixed;
+            bottom: 30px;
+            left: 20px;
+            background: url(images/logo.png);
+            background-size: 100%;
+            width: 220px;
+            height: 60px;
+        }
+    </style>
+</head>
+
+<body onload="onload()"></body>
+
+<div id="container">
+</div>
+
+<div class="logo"></div>
+
+
+<script type="text/javascript">
+    var map = new AMap.Map('container', {
+        resizeEnable: true,
+        center: [116.397428, 39.90923],
+        zoom: 10
+    });
+    map.plugin('AMap.Geolocation', function() {
+        geolocation = new AMap.Geolocation({
+            enableHighAccuracy: true, //是否使用高精度定位，默认:true
+            timeout: 10000, //超过10秒后停止定位，默认：无穷大
+            buttonOffset: new AMap.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+            zoomToAccuracy: true, //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+            buttonPosition: 'RB'
+        });
+        map.addControl(geolocation);
+        geolocation.getCurrentPosition();
+        AMap.event.addListener(geolocation, 'complete', onComplete); //返回定位信息
+        // AMap.event.addListener(geolocation, 'error', onError); //返回定位出错信息
+    });
+    //解析定位结果
+    function onComplete(data) {
+        console.log("Geolocation ",data.position.getLng(), data.position.getLat())
+        map.setCenter([data.position.getLng(), data.position.getLat()])
+    }
+
+    map.on('click', function(e) {
+        console.log(e.lnglat.getLng() + ',' + e.lnglat.getLat())
+        drawMarker({position: [e.lnglat.getLng(), e.lnglat.getLat()], name: "", desc: ""}, true)
+    });
+
+    var markers = []
+    var markerData = []
+    if (localStorage.getItem("markerData")){
+        markerData = JSON.parse(localStorage.getItem("markerData"))
+    }
+
+    console.log(markerData)
+
+
+    function save(lng, lat){
+        var dialog = document.getElementById("dialog_"+lng+"_"+lat)
+
+        var name = dialog.getElementsByTagName("input").item(0).value
+        if(name === ""){
+            alert("请输入名称");
+            return
+        }
+
+        var desc = dialog.getElementsByTagName("textarea").item(0).value
+        console.log(name, desc)
+
+        var index = markerData.indexOf(getMarker(lng, lat));
+        if (index > -1) {
+            markerData.splice(index, 1);
+        }
+        markerData.push({name:name, desc: desc, position:[lng, lat]})
+
+        localStorage.setItem("markerData", JSON.stringify(markerData))
+
+        setLabel(markers[lng+"_"+lat], name)
+
+        map.clearInfoWindow();
+    }
+
+    function del(lng, lat){
+
+        var index = markerData.indexOf(getMarker(lng, lat));
+        if (index > -1) {
+            markerData.splice(index, 1);
+        }
+        localStorage.setItem("markerData", JSON.stringify(markerData))
+
+        map.remove(markers[lng+"_"+lat])
+        document.getElementById("dialog_"+lng+`_`+lat).remove()
+
+    }
+
+    var infoWindow = new AMap.InfoWindow({offset: new AMap.Pixel(0, -30)});
+
+    if(markerData){
+        for (var i = 0, marker; i < markerData.length; i++) {
+            drawMarker(markerData[i], false)
+        }
+    }
+
+
+    function makeContent(markerInfo) {
+        let content = `
+            <div  class="editDialog" id="dialog_`+markerInfo.position[0]+`_`+markerInfo.position[1]+`">
+                <div style=" position: absolute;right: 30px;top: 28px;cursor: pointer;width: 30px;height: 40px;" onclick=closeInfoWindow(`+markerInfo.position[0]+","+ markerInfo.position[1]+`)></div>
+                <div><span>位置:</span><input name="name" class="name" value="`+markerInfo.name+`"></div>
+                <div><span>详情:</span><textarea name="desc">`+markerInfo.desc+`</textarea></div>
+                <div style="text-align: right;padding-right: 40px;margin-top: 13px;">
+                    <div class="btn" onclick="save(`+markerInfo.position[0]+","+ markerInfo.position[1]+`)">保存</div>
+                    <div class="btn" onclick="del(`+markerInfo.position[0]+","+ markerInfo.position[1] + `)">删除</div>
+                </div>
+            </div>
+            `
+        return content
+    }
+
+    function drawMarker(markerInfo, emit) {
+
+        var marker = new AMap.Marker({
+            position: markerInfo.position,
+            icon: "http://175.24.103.55:6001/images/marker.png",
+            offset: new AMap.Pixel(-13, -30),
+            map: map
+        });
+
+
+        markers[markerInfo.position[0]+"_"+markerInfo.position[1]] = marker
+
+        setLabel(marker, markerInfo.name)
+        marker.content = makeContent(markerInfo);
+        marker.on('click', markerClick);
+
+        if(emit){
+            marker.emit('click', {target: marker});
+        }
+    }
+    function markerClick(e) {
+
+        let position = e.target.getPosition()
+        let markerInfo = getMarker(position.lng, position.lat)
+
+        if(markerInfo){
+            infoWindow.setContent(makeContent(markerInfo))
+        }else{
+            infoWindow.setContent(e.target.content);
+        }
+
+        infoWindow.open(map, e.target.getPosition());
+    }
+
+    function getMarker(lng, lat) {
+        if(markerData){
+            for (let i = 0; i < markerData.length; i++){
+                if(markerData[i].position[0] === lng && markerData[i].position[1] === lat){
+                    return markerData[i]
+                }
+            }
+        }
+
+        return undefined
+    }
+
+    function closeInfoWindow(lng, lat) {
+        var dialog = document.getElementById("dialog_"+lng+"_"+lat)
+
+        var name = dialog.getElementsByTagName("input").item(0).value
+        if(name === ""){
+            // alert("请输入名称");
+            map.remove([markers[lng+"_"+lat]])
+        }
+        map.clearInfoWindow();
+    }
+
+    function setLabel(marker, name) {
+        marker.setLabel({
+            offset: new AMap.Pixel(20, 20),  //设置文本标注偏移量
+            content: "<div class='info'>"+name+"</div>", //设置文本标注内容
+            direction: 'right' //设置文本标注方位
+        });
+    }
+    
+    function onload() {
+
+    }
+</script>
+</html>
