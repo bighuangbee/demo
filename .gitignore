@@ -1,2 +1,7 @@
 .idea
 logs
+*.so
+*.o
+*.cxx
+*.a
+lib*
