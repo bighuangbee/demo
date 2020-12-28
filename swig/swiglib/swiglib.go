@@ -73,7 +73,7 @@ extern swig_type_12 _wrap_SimpleClass_hello_swiglib_6d4e22488d3f2f59(uintptr_t a
 extern swig_type_13 _wrap_SimpleClass_say_swiglib_6d4e22488d3f2f59(uintptr_t arg1, swig_type_14 arg2);
 extern void _wrap_delete_SimpleClass_swiglib_6d4e22488d3f2f59(uintptr_t arg1);
 #undef intgo
-#cgo LDFLAGS: -L/mnt/d/server/www/demo/swig/src -lExample
+#cgo LDFLAGS: -L/mnt/d/server/www/demo/swig -lsimple
 */
 import "C"
 

@@ -5,5 +5,5 @@ std::string SimpleClass::hello(){
 }
 
 std::string SimpleClass::say(std::string key){
-    return "say " + key;
+    return "say say " + key;
 }
