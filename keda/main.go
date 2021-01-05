@@ -15,5 +15,5 @@ func main() {
 	fp := (*bool)(unsafe.Pointer(initRes.Swigcptr()))
 	fmt.Println("-------", *fp)
 
-	swiglib.Kdm_SubscriptDeviceStatus()
+	swiglib.Kdm_SubscriptDeviceStatus(simpleClass, )
 }
