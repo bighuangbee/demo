@@ -9,4 +9,4 @@ require (
 	github.com/bighuangbee/gomod v1.0.0
 )
 
-replace github.com/bighuangbee/gomod => ../gomod
+replace github.com/bighuangbee/gomod => ./
