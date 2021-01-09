@@ -1,18 +1,13 @@
-// bar1.go
 package main
 
-/*
-#include <stdio.h>
-
-extern void GoExportedFunc();
-
-void bar() {
-        printf("I am bar!\n");
-        GoExportedFunc();
-}
-*/
 import "C"
+import (
+"fmt"
+"unsafe"
+)
 
-func main() {
-	C.bar()
+//export GoExportedFunc
+func GoExportedFunc(str *C.char) {
+	fmt.Println("go string ",string(C.GoString(str)))
+	fmt.Println("I am a GoExportedFunc!--", (*byte)(unsafe.Pointer(str)))
 }
