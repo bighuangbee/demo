@@ -6,3 +6,4 @@ logs
 *.a
 lib*
 build/*
+*pb.go
