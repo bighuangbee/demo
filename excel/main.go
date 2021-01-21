@@ -23,7 +23,7 @@ func main() {
 	//xlsxFile.Save(targetPath)
 
 
-	xlsPath := pwd + `\房地产.xls`
+	xlsPath := pwd + `/房地产.xls`
 	f, err := xls.Open(xlsPath, "utf-8")
 	if err != nil {
 		log.Fatal(err)
@@ -40,7 +40,7 @@ func main() {
 	}
 
 
-	xlsxPath := pwd + `\房地产.xlsx`
+	xlsxPath := pwd + `/房地产.xlsx`
 	xlsxFile, err1 := xlsx.OpenFile(xlsxPath)
 	if err1 != nil{
 		log.Fatal(err1)
