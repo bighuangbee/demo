@@ -4,6 +4,6 @@ logs
 *.o
 *.cxx
 *.a
-lib*
+lib/*
 build/*
 *pb.go

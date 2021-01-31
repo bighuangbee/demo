@@ -8,7 +8,7 @@
  * interface file instead.
  * ----------------------------------------------------------------------------- */
 
-// source: swiglib.i
+// source: swig.i
 
 package swiglib
 
