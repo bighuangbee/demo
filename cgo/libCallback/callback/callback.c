@@ -1,4 +1,4 @@
-#include "test.h"
+#include "callback.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -18,6 +18,6 @@ void call(){
     callback(&info, (char *)"room id, send by C func...");
 }
 
-void clean(){
+void freeObject(){
     free(info.a);
 }

@@ -1,23 +1,23 @@
 package main
 
 /*
-#cgo LDFLAGS: -L ./lib -ltest
-#cgo CFLAGS: -I./
-#include "test.h"
+#cgo LDFLAGS: -L${SRCDIR}/lib -lcallback
+#cgo CFLAGS: -I callback
+#include "callback.h"
 
-int goCallBackTest(struct info *, char *);
+int goCallBackFunc(struct info *, char *);
 */
 import "C"
 import "fmt"
 
 func main(){
-	C.setcallback(C.callbackFuncProto(C.goCallBackTest))
+	C.setcallback(C.callbackFuncProto(C.goCallBackFunc))
 	C.call()
-	C.clean()
+	C.freeObject()
 }
 
-//export goCallBackTest
-func goCallBackTest(info *C.struct_info, roomId *C.char) C.int{
+//export goCallBackFunc
+func goCallBackFunc(info *C.struct_info, roomId *C.char) C.int{
 	fmt.Println("goCallBackTest", info.size, C.GoString(roomId))
 	return 1
 }

@@ -10,13 +10,14 @@ typedef struct info{
     int  size;
 }CInfo;
 
+//可被C调用的函数
 typedef int(*callbackFuncProto) (CInfo* n, char *roomId);
 
 int setcallback(callbackFuncProto s);
 
 void call();
 
-void clean();
+void freeObject();
 
 #ifdef __cplusplus
 }
