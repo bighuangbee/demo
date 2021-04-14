@@ -1,6 +1,7 @@
 #include "callback.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 callbackFuncProto callback;
 CInfo info;
@@ -14,8 +15,9 @@ int setcallback(callbackFuncProto foo){
     return 1;
 }
 
-void call(){
-    callback(&info, (char *)"room id, send by C func...");
+void caller(){
+    int r = callback(&info, (char *)" call from C func");
+    printf("---%d", r);
 }
 
 void freeObject(){

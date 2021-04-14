@@ -10,12 +10,14 @@ typedef struct info{
     int  size;
 }CInfo;
 
-//可被C调用的函数
+//C函数指针，函数原型一致
 typedef int(*callbackFuncProto) (CInfo* n, char *roomId);
 
+//接收C的函数指针，用于被C回调
 int setcallback(callbackFuncProto s);
 
-void call();
+//回调函数触发器
+void caller();
 
 void freeObject();
 
