@@ -18,6 +18,7 @@ type WorkerWarp struct {
 	wg         *sync.WaitGroup
 	results    chan interface{}
 	workerPool []WorkerFunc
+	poolSize 	int
 }
 
 func (this *WorkerWarp) Add(worker WorkerFunc)  {
@@ -53,16 +54,18 @@ func NewWorkerWarp()*WorkerWarp{
 	return &WorkerWarp{
 		wg:         &sync.WaitGroup{},
 		results:    make(chan interface{}),
+		poolSize:   3,
 	}
 }
 
 func main(){
 	startTime := time.Now()
 
-	workerCount := 5
+
 	workerWarp := NewWorkerWarp()
 
-	for i:=0; i<workerCount; i++{
+	taskCount := 5
+	for i:=0; i< taskCount; i++{
 		workerWarp.Add(func() interface{} {
 			time.Sleep(time.Second*time.Duration(rand.Intn(3)))
 			return rand.Intn(10)

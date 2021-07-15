@@ -1,0 +1,9 @@
+syntax = "proto3";
+option go_package = "pb/proto";
+
+message Example {
+  string name = 1;
+  optional int32 age = 2;
+  optional string addr = 3;
+  optional int32 blance = 4;
+}
