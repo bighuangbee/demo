@@ -4,6 +4,11 @@ option go_package = "pb/proto";
 message Example {
   string name = 1;
   optional int32 age = 2;
-  optional string addr = 3;
-  optional int32 blance = 4;
+   string addr = 3;
+   int32 blance = 4;
+}
+
+
+service ExampleService{
+  rpc GetExample(Example) returns (Example) {}
 }

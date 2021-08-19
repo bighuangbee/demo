@@ -7,3 +7,5 @@ logs
 lib/*
 build/*
 *pb.go
+MIT-*
+MIT6*

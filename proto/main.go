@@ -7,9 +7,9 @@ package main
 
 import (
 	"bytes"
+	"demo/proto/pb/proto"
 	"fmt"
 	"github.com/golang/protobuf/jsonpb"
-	"prototest/pb/proto"
 )
 
 func main()  {
