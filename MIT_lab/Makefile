@@ -1,4 +1,4 @@
 default:
 
 mrSimple:
-	cd src/main && go run mapReduceSimple.go ../../inputFile/*
+	cd src/main && go run mrSingle.go ../../inputFile/*
