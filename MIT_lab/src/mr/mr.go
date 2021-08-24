@@ -2,6 +2,7 @@ package mr
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"hash/fnv"
 	"io/ioutil"
@@ -59,6 +60,9 @@ func DoMap1(filename string, mapTaskIndex int, nReduce int)(maps[]*KeyValue, err
 }
 
 func DoMap(filename string, mapTaskIndex int, nReduce int)(maps[]*KeyValue, err error){
+	if nReduce <= 0{
+		return nil, errors.New("DoMap nReduce=0")
+	}
 
 	encoders := make([]*json.Encoder, nReduce)
 	for i := range encoders {

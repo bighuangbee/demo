@@ -6,20 +6,19 @@
 package scheduler
 
 import (
+	mr2 "demo/MIT-6.824-master/src/mr"
+	"demo/MIT_lab/src/mr"
 	"demo/MIT_lab/src/rpc"
 	"fmt"
 	"time"
 )
 
-type Task struct {
-	Name string
-}
 
 type TaskQueue struct{
-	Queue []*Task
+	Queue []mr.ITask
 }
 
-func (this *TaskQueue)Pop()*Task{
+func (this *TaskQueue)Pop()mr.ITask{
 	if len(this.Queue) == 0{
 		return nil
 	}
@@ -29,7 +28,7 @@ func (this *TaskQueue)Pop()*Task{
 	return t
 }
 
-func (this *TaskQueue)Push(t *Task){
+func (this *TaskQueue)Push(t mr.ITask){
 	this.Queue = append(this.Queue, t)
 }
 
@@ -38,45 +37,60 @@ type Scheduler struct {
 
 	ExitChan chan struct{} //退出chan
 
-	WorkerReady chan *Master
+	WorkerReady chan *Worker
 }
 
-var MasterScheduler *Scheduler
-
-func init(){
-	MasterScheduler = NewScheduler()
-}
 
 func NewScheduler() *Scheduler {
 	return &Scheduler{
 		TaskQueue:   TaskQueue{},
 		ExitChan:    make(chan struct{}),
-		WorkerReady: make(chan *Master, 10),
+		WorkerReady: make(chan *Worker, 10),
 	}
 }
 
-func (this *Scheduler)Schedule(){
-	for{
-		select{
-			case worker := <- this.WorkerReady: {
-				t1 := time.Now()
+func (this *Scheduler) JoinWorker(worker *Worker){
+	go func() {
+		this.WorkerReady <- worker
+	}()
+}
 
-				task := this.TaskQueue.Pop()
-				if task != nil{
-					ok := rpc.Call(worker.Address, WorkerSvcName+".Do", &WorkerReq{TaskName: task.Name}, new(struct{}))
+func (this *Scheduler)Schedule(taskCount int){
+	for i := 0; i < taskCount; i++ {
+		go func(reduceIndex int) {
+			for{
+				worker := <- this.WorkerReady
+				t1 := time.Now()
+				iTask := this.TaskQueue.Pop()
+				if iTask != nil{
+					task := iTask.GetTask()
+
+					ok := rpc.Call(worker.Addr, WorkerSvcName+".Do", task, new(struct{}))
 					if ok {
-						this.WorkerReady <- worker
+						if task.Status == mr.TaskStatusMap{
+							reduceTask := mr.ReduceTask{Task: mr.Task{
+								Status:    mr2.TaskReduce,
+								TaskIndex: taskCount,
+								Reduce:    reduceIndex,
+							}}
+							this.TaskQueue.Push(&reduceTask)
+						}
+
+						this.JoinWorker(worker)
 					}
-					fmt.Println("【Scheduler】Schedule", task.Name, worker.Address, time.Now().Sub(t1), ok)
+					fmt.Println("【Scheduler】Schedule", worker.Addr, task.Status, time.Now().Sub(t1), ok, task.Reduce)
 				}else{
 					fmt.Println("【Scheduler】task done")
-					go func() {
-						this.ExitChan <- struct{}{}
-					}()
+					this.Exit()
 					return
 				}
 			}
-		}
+		}(i)
 	}
 }
 
+func (this *Scheduler)Exit(){
+	go func() {
+		this.ExitChan <- struct{}{}
+	}()
+}

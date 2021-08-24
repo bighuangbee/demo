@@ -20,15 +20,18 @@ func Run(addr string, name string, rcvr interface{}){
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		fmt.Println("fatal error: ", err)
+		panic("fatal error: " + err.Error())
 	}
 
-	for {
-		conn, err := listener.Accept()
-		if err != nil {
-			fmt.Println("Accept error:", err)
+	go func() {
+		for {
+			conn, err := listener.Accept()
+			if err != nil {
+				fmt.Println("Accept error:", err)
+			}
+			rpc.ServeConn(conn)
 		}
-		rpc.ServeConn(conn)
-	}
+	}()
 }
 
 func Call(rpcAddr string, rpcname string, request interface{}, resp interface{}) bool {

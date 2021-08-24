@@ -31,6 +31,7 @@ func dingSend(content string){
 		fmt.Println(err)
 	}
 }
+
 func main()  {
 	http.HandleFunc("/watch", func(w http.ResponseWriter, r *http.Request) {
 		msg, _ := ioutil.ReadAll(r.Body)
