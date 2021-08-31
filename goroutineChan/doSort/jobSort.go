@@ -7,18 +7,15 @@ package main
 
 import (
 	"sync"
-	"time"
 )
 
 func job1(){
 	println("job1")
-	time.Sleep(time.Millisecond*20)
 	ch <- struct{}{}
 }
 func job2(){
 	<- ch
 	println("job2")
-	time.Sleep(time.Millisecond*0)
 }
 
 type JobGroup struct {

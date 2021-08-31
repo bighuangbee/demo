@@ -3,7 +3,7 @@
  * @param $
  * @return $
  **/
-package goroutinePool
+package goroutineChan
 
 import (
 	"fmt"

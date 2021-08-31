@@ -1,9 +1,4 @@
-/**
- * @desc //TODO $
- * @param $
- * @return $
- **/
-package goroutinePool
+package goroutineChan
 
 type T int
 
