@@ -7,9 +7,9 @@ package goroutineChan
 
 import (
 	"fmt"
-	"math/rand"
 	"sync/atomic"
 	"testing"
+	"time"
 )
 
 /*
@@ -36,32 +36,26 @@ func TestSafe(t *testing.T)  {
 	SafeClose(ch)
 }
 
-//一个发送者，多个接收者，在数据发送完毕后在发送端关闭chan
-func TestName(t *testing.T) {
-	worker := NewWorkerWarper(3)
-
-	fn := func() interface{} {
-		return rand.Int31n(5)
-	}
+func TestTasks(t *testing.T) {
+	worker := NewTaskWorker(10)
 
 	go func() {
-		taskCount := 10
-		for i := 0; i < taskCount; i++ {
-			worker.Add(fn)
+		for i := 0; i < 1000; i++ {
+			worker.AddTask(func() interface{} {
+				time.Sleep(time.Millisecond*10)
+				return 1
+			})
 		}
 
-		//最后一个发送操作完成后，关闭chan
-		worker.Close()
+		close(worker.Tasks)
 	}()
 
-	total := int32(0)
-	cb := func(result interface{}) interface{}{
-		fmt.Println("result:", result)
-		atomic.AddInt32(&total, result.(int32))
+	var total int32
+	cb := func(result interface{})interface{} {
+		atomic.AddInt32(&total, int32(result.(int)))
 		return atomic.LoadInt32(&total)
 	}
 	worker.do(cb)
-
 	worker.wg.Wait()
 
 	fmt.Println("total:", total)
