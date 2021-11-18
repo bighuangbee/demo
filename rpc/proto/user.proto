@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+
+option go_package = "proto/pb";
+
+service UserService {
+  rpc Create (User) returns (UserRes) {}
+}
+
+message User {
+  int64 id = 1;
+  string username = 2;
+  string email = 3;
+  repeated string  role = 4;
+  string password = 5;
+  optional string nickname = 6;
+  int64 create_user_id = 7;
+  string create_time = 8;
+  optional int32 status = 9;
+}
+
+message UserRes {
+  int64 user_id = 1;
+}

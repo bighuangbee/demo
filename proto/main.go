@@ -7,7 +7,7 @@ package main
 
 import (
 	"bytes"
-	"demo/proto/pb/proto"
+	"proto/pb/proto"
 	"fmt"
 	"github.com/golang/protobuf/jsonpb"
 )

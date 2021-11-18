@@ -1,0 +1,4 @@
+ExampleGrpc: "ExampleGrpc"
+ExampleGrpcPort: ":50001"
+
+ExampleGrpcAddr: "localhost:50001"

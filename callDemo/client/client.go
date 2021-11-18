@@ -55,17 +55,17 @@ type Transfer struct {		//向其他连接发送的消息体
 }
 
 type Data struct {
-	UserId int 		`json:"user_id,omitempty"`
-	CallId string 	`json:"call_id,omitempty"`
+	UserId int 		`json:"user_id"`
+	CallId string 	`json:"call_id"`
 }
 type Pos struct {
 	Lng float64 `json:"lng"`
 	Lat float64 `json:"lat"`
 }
 type messageBody struct {		//接收客户端发送的消息体
-	Message string 	`json:"message,omitempty"`
-	Result 	string 	`json:"result,omitempty"`
-	Data 	Data 	`json:"data,omitempty"`
+	Message string 	`json:"message"`
+	Result 	string 	`json:"result"`
+	Data 	Data 	`json:"data"`
 	Pos 	Pos		`json:"pos"`
 }
 
