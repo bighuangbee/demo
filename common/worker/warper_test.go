@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"sync/atomic"
 	"testing"
-	"time"
 )
 
 /*
@@ -21,10 +20,11 @@ import (
 不要在接收端关闭chan，也不要在多个并发的发送端中关闭chan。
 所以正确的做法是，在唯一的发送端或多个发送端的最后一个当中进行关闭。
 
+特殊情况下必须在接收端或发送端中关闭chan，可以使用recover拦截发送或关闭chan的操作而产生panic，避免引起主程序的异常，实现安全的发送或接收
 */
 
-//特殊情况下必须在接收端或发送端中关闭chan，可以使用recover拦截发送或关闭chan的操作而产生panic，避免引起主程序的异常，实现安全的发送或接收
 func TestSafe(t *testing.T)  {
+
 	ch := make(chan T, 10)
 
 	fmt.Println("SafeSend:", SafeSend(ch, T(12)))
@@ -36,17 +36,16 @@ func TestSafe(t *testing.T)  {
 	SafeClose(ch)
 }
 
-func TestTasks(t *testing.T) {
-	worker := NewWorker(10)
+func TestWorker(t *testing.T) {
+	worker := New(10)
 
 	go func() {
 		for i := 0; i < 1000; i++ {
 			worker.Add(func() interface{} {
-				time.Sleep(time.Millisecond*10)
+				//time.Sleep(time.Millisecond*10)
 				return 1
 			})
 		}
-
 		close(worker.Tasks)
 	}()
 
@@ -55,8 +54,8 @@ func TestTasks(t *testing.T) {
 		atomic.AddInt32(&total, int32(result.(int)))
 		return atomic.LoadInt32(&total)
 	}
-	worker.do(cb)
-	worker.wg.Wait()
+	worker.Run(cb)
+	worker.Wg.Wait()
 
 	fmt.Println("total:", total)
 }

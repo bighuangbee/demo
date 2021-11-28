@@ -1,6 +1,7 @@
 
 package worker
 
+//通过chan实现互斥锁
 type Mutex struct {
 	m chan struct{}
 }
