@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>菜鸟教程(runoob.com)</title>
+</head>
+<body>
+
+<p>要使用的视频(autoplay要打开才能截取到图片):</p>
+<video id="video1" controls width="0" height="0" autoplay>
+    <source src="http://evidence.hidrone.cn/api/files/stream?filename=1637637188799991.mp4" type='video/mp4'>
+<!--    <source src="mov_bbb.ogg" type='video/ogg'>-->
+<!--    <source src="mov_bbb.webm" type='video/webm'>-->
+</video>
+
+<p>画布 (代码在每20毫秒绘制当前的视频帧):</p>
+<canvas id="myCanvas" width="270" height="135" style="border:1px solid #d3d3d3;">
+    您的浏览器不支持 HTML5 canvas 标签。
+</canvas>
+
+<p>图片(将画布的视频帧同步生成图片)：</p>
+<div id="imgbox"></div>
+
+
+<script>
+        var v=document.getElementById("video1")
+        var c=document.getElementById("myCanvas")
+        var imgbox = document.getElementById('imgbox')
+        var delay = 100 // 截取封面的延迟（有的视频开头可能有黑屏所以可以加一个延迟）
+        ctx=c.getContext('2d');
+
+        // 监听可播放
+        v.addEventListener('canplay', function() {
+            setTimeout(function(){
+                // 相应视频的宽和高
+                var w = v.videoWidth
+                var h = v.videoHeight
+                var space = 5 // canvas的间距，可取去掉
+
+                // 绘制视频到canvas上
+                ctx.drawImage(v, space, space, w+space, h+space)
+
+                // 生成图片
+                let img = document.createElement('img')
+                img.src = c.toDataURL('image/png') // 这就是封面图片的地址
+                img.width = w // 图片宽度，可按需调节，也可以不设置
+                img.height = h // 图片高度，可按需调节，也可以不设置
+                imgbox.appendChild(img) // 打印图片
+            }, delay)
+        },false)
+
+        // （其他钩子，按需使用）        // 监听播放
+        v.addEventListener('play',function() {
+            // ...
+        },false)
+
+        // 监听暂停
+        v.addEventListener('pause',function() {
+            // ...
+        },false)
+
+        // 监听播放结束
+        v.addEventListener('ended',function() {
+            // ...
+        },false)
+    </script>
+
+</body>
+</html>

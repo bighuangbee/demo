@@ -5,7 +5,12 @@
  **/
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"gopackage/common"
+)
+
+import jsoniter "github.com/json-iterator/go"
 
 //5
 func f() int {
@@ -42,15 +47,33 @@ func f3() (r int) {
 	return 1
 }
 
-func main() {
-	//println(f())
-	//println(f1())
-	//println(f2())
-	//println(f3())
+//func main() {
+//	//println(f())
+//	//println(f1())
+//	//println(f2())
+//	//println(f3())
+//
+//	a := []int{1,2,3}
+//	for _, v := range a {
+//		a = append(a, v)
+//	}
+//	fmt.Println(a)
+//}
 
-	a := []int{1,2,3}
-	for _, v := range a {
-		a = append(a, v)
+func main() {
+	type name struct {
+		Name string `json:"name"`
+		Id int64 `json:"id"`
 	}
-	fmt.Println(a)
+
+	n := name{
+		Name: "aaa",
+		Id:   6673221165400540161,
+	}
+	j, _ := jsoniter.Marshal(n)
+	fmt.Println(string(j))
+
+	fmt.Println(common.Struct2Map(n))
 }
+
+
